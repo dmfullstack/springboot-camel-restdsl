@@ -1,8 +1,9 @@
 package gr.iserm.java.spring.camel;
 
+import gr.iserm.java.spring.customer.Customer;
+import gr.iserm.java.spring.customer.CustomerTransformationService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
@@ -34,12 +35,21 @@ public class RestRouteBuilder extends RouteBuilder {
                 .post("/bye").to("mock:update")
                 .get("/data").produces(MediaType.APPLICATION_JSON_VALUE).to("direct:data");
 
+        rest("/customer")
+                .get("/").to("direct:customerAll")
+                .post("/echo").consumes(MediaType.APPLICATION_JSON_VALUE).type(Customer.class).to("direct:customerEcho");
+
         from("direct:hello")
                 .transform().constant("Hello World");
         from("direct:bye")
                 .transform().constant("Bye World");
         from("direct:data")
                 .transform().constant(Collections.singletonMap("key", "value"));
+        from("direct:customerAll")
+                .bean(CustomerTransformationService.class, "allCustomers");
+        from("direct:customerEcho")
+                .bean(CustomerTransformationService.class, "echoCustomer");
+
 
     }
 
