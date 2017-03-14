@@ -18,6 +18,10 @@ public class CustomerTransformationService {
         return customer;
     }
 
+    public Customer newCustomer() {
+        return randomCustomer();
+    }
+
     private Customer randomCustomer() {
         return new Customer(UUID.randomUUID().toString(), UUID.randomUUID().toString());
     }
